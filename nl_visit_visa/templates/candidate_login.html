@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Login &middot; NL Visit Visa{% endblock %}
+{% block content %}
+  <div class="card card--center">
+    <h2 class="text-center mb-1">Welcome back</h2>
+    <p class="subtitle text-center">Sign in to continue your application.</p>
+    <form method="post" class="mt-2">
+      {{ form.hidden_tag() }}
+      <p>
+        {{ form.username.label }}
+        {{ form.username(autocomplete="username", autofocus=True) }}
+      </p>
+      <p>
+        {{ form.password.label }}
+        {{ form.password(autocomplete="current-password") }}
+      </p>
+      <p class="mt-2">
+        {{ form.submit(class="btn--primary btn--block") }}
+      </p>
+    </form>
+    <p class="text-center muted mt-2">
+      No account? <a href="{{ url_for('candidate_register') }}">Create one</a>
+    </p>
+  </div>
+{% endblock %}

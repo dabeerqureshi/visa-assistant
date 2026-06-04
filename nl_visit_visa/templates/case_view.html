@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import status_badge %}
+{% block title %}Case &middot; NL Visit Visa{% endblock %}
+{% block content %}
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h2 class="mb-0">{{ case.title }}</h2>
+        <p class="subtitle">Application #{{ case.id }}</p>
+      </div>
+      <div>{{ status_badge(case.status) }}</div>
+    </div>
+
+    {% if current_user.is_authenticated and current_user.role == 'admin' %}
+      <div class="card-actions" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin:1rem 0;">
+        <form method="post" action="{{ url_for('admin_review_case', case_id=case.id) }}">
+          <button type="submit" name="action" value="review" class="btn btn--secondary">Mark for review</button>
+          <button type="submit" name="action" value="approve" class="btn btn--primary">Approve</button>
+          <button type="submit" name="action" value="reject" class="btn btn--danger">Reject</button>
+        </form>
+      </div>
+    {% endif %}
+
+    <h3>Personal</h3>
+    <dl class="kv">
+      <dt>Full name</dt><dd>{{ case.full_name or '—' }}</dd>
+      <dt>Age</dt><dd>{{ case.age or '—' }}</dd>
+      <dt>Nationality</dt><dd>{{ case.nationality or '—' }}</dd>
+      <dt>Marital status</dt><dd>{{ (case.marital_status or '—')|replace('_', ' ') }}</dd>
+    </dl>
+
+    <hr>
+
+    <h3>Professional</h3>
+    <dl class="kv">
+      <dt>Job status</dt><dd>{{ (case.job_status or '—')|replace('_', ' ') }}</dd>
+      <dt>Job title</dt><dd>{{ case.job_title or '—' }}</dd>
+      <dt>Employer</dt><dd>{{ case.employer_name or '—' }}</dd>
+      <dt>Work experience</dt><dd>{{ case.work_experience_years ~ ' years' if case.work_experience_years is not none else '—' }}</dd>
+      <dt>Business name</dt><dd>{{ case.business_name or '—' }}</dd>
+      <dt>Business experience</dt><dd>{{ case.business_experience_years ~ ' years' if case.business_experience_years is not none else '—' }}</dd>
+      <dt>Education</dt><dd>{{ case.education or '—' }}</dd>
+      <dt>Monthly salary</dt><dd>PKR {{ '{:,.0f}'.format(case.monthly_salary) if case.monthly_salary else '—' }}</dd>
+    </dl>
+
+    <hr>
+
+    <h3>Travel & financial</h3>
+    <dl class="kv">
+      <dt>Travel history</dt>
+      <dd><span style="white-space: pre-wrap;">{{ case.travel_history or '—' }}</span></dd>
+      <dt>Bank statement</dt><dd>{{ 'Yes' if case.bank_statement_available else 'No' }}{% if case.bank_statement_notes %} &middot; {{ case.bank_statement_notes }}{% endif %}</dd>
+      <dt>Health insurance</dt>
+      <dd>
+        {% if case.health_insurance_provider %}
+          {{ case.health_insurance_provider }}
+          {% if case.health_insurance_policy %} &middot; {{ case.health_insurance_policy }}{% endif %}
+          {% if case.health_insurance_coverage %} &middot; {{ case.health_insurance_coverage }}{% endif %}
+        {% else %}—{% endif %}
+      </dd>
+    </dl>
+
+    {% if case.details %}
+      <hr>
+      <h3>Additional details</h3>
+      <p style="white-space: pre-wrap;">{{ case.details }}</p>
+    {% endif %}
+
+    <hr>
+
+    <h3>Document checklist</h3>
+    {% set checked, total = case.checklist_progress() %}
+    <div class="progress">
+      <div class="progress-bar" style="width: {{ (checked / total * 100) if total else 0 }}%"></div>
+    </div>
+    <p class="muted mt-1"><strong>{{ checked }} / {{ total }}</strong> confirmed</p>
+
+    {% if case.checklist_items %}
+      <ul class="checklist readonly">
+        {% for item in case.checklist_items %}
+          <li class="checklist-item {% if item.has_document %}is-checked{% endif %}">
+            <span class="checklist-row">
+              <span class="check-tick">{% if item.has_document %}✓{% else %}○{% endif %}</span>
+              <span class="checklist-name">{{ item.document_name }}</span>
+            </span>
+            {% if item.notes %}<span class="checklist-notes">{{ item.notes }}</span>{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="empty-state" style="padding: 1rem;">
+        <p class="mb-0">No checklist items.</p>
+      </div>
+    {% endif %}
+
+    <div class="row mt-3">
+      <a class="btn btn--secondary" href="{{ url_for('admin_dashboard') }}">&larr; Back to dashboard</a>
+    </div>
+  </div>
+{% endblock %}

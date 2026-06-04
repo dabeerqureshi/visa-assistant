@@ -1,0 +1,11 @@
+{# Reusable status badge. Usage: {{ status_badge(case.status) }} #}
+{% macro status_badge(status) -%}
+  {% set s = (status or 'draft')|lower %}
+  {% set cls = 'draft' %}
+  {% if s == 'submitted' %}{% set cls = 'submitted' %}
+  {% elif s == 'under_review' or s == 'review' %}{% set cls = 'review' %}
+  {% elif s == 'approved' %}{% set cls = 'approved' %}
+  {% elif s == 'rejected' %}{% set cls = 'rejected' %}
+  {% endif %}
+  <span class="badge badge--{{ cls }}">{{ s|replace('_', ' ') }}</span>
+{%- endmacro %}

@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Flask / app
+instance/
+nl_visit_visa.db
+nl_visit_visa.db-journal
+
+# Uploads (keep dir with .gitkeep)
+uploads/*
+!uploads/.gitkeep

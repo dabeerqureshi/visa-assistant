@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import status_badge %}
+{% block title %}Application details &middot; NL Visit Visa{% endblock %}
+{% block content %}
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h2 class="mb-0">Application details</h2>
+        <p class="subtitle">{{ case.title }} &middot; #{{ case.id }}</p>
+      </div>
+      {{ status_badge(case.status) }}
+    </div>
+
+    <form method="post" class="mt-2">
+      {{ form.hidden_tag() }}
+
+      <h3 class="mt-0">Personal information</h3>
+      <div class="form-grid">
+        <div class="field field--span-2">
+          {{ form.full_name.label }}
+          {{ form.full_name(autofocus=True) }}
+          {% for e in form.full_name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="field">
+          {{ form.age.label }}
+          {{ form.age() }}
+          {% for e in form.age.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="field">
+          {{ form.nationality.label }}
+          {{ form.nationality(placeholder="e.g. Pakistani") }}
+          {% for e in form.nationality.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="field">
+          {{ form.marital_status.label }}
+          {{ form.marital_status() }}
+        </div>
+      </div>
+
+      <hr>
+
+      <h3>Professional information</h3>
+      <div class="form-grid">
+        <div class="field">
+          {{ form.job_status.label }}
+          {{ form.job_status() }}
+        </div>
+        <div class="field">
+          {{ form.job_title.label }}
+          {{ form.job_title() }}
+        </div>
+        <div class="field">
+          {{ form.employer_name.label }}
+          {{ form.employer_name() }}
+        </div>
+        <div class="field">
+          {{ form.work_experience_years.label }}
+          {{ form.work_experience_years() }}
+        </div>
+        <div class="field">
+          {{ form.business_name.label }}
+          {{ form.business_name() }}
+        </div>
+        <div class="field">
+          {{ form.business_experience_years.label }}
+          {{ form.business_experience_years() }}
+        </div>
+        <div class="field">
+          {{ form.education.label }}
+          {{ form.education(placeholder="e.g. Bachelors in Computer Science") }}
+        </div>
+        <div class="field">
+          {{ form.monthly_salary.label }}
+          {{ form.monthly_salary() }}
+        </div>
+      </div>
+
+      <hr>
+
+      <h3>Travel & financial</h3>
+      <div class="form-grid">
+        <div class="field field--span-2">
+          {{ form.travel_history.label }}
+          {{ form.travel_history(placeholder="Countries visited in the last 5 years, e.g.\nUAE 2022, Turkey 2023, UK 2024") }}
+        </div>
+        <div class="field field--span-2">
+          <label class="checkbox">
+            {{ form.bank_statement_available() }} {{ form.bank_statement_available.label.text }}
+          </label>
+        </div>
+        <div class="field field--span-2">
+          {{ form.bank_statement_notes.label }}
+          {{ form.bank_statement_notes(placeholder="Bank name, branch, account #") }}
+        </div>
+        <div class="field">
+          {{ form.health_insurance_provider.label }}
+          {{ form.health_insurance_provider(placeholder="e.g. Allianz, AXA") }}
+        </div>
+        <div class="field">
+          {{ form.health_insurance_policy.label }}
+          {{ form.health_insurance_policy() }}
+        </div>
+        <div class="field">
+          {{ form.health_insurance_coverage.label }}
+          {{ form.health_insurance_coverage(placeholder="e.g. €30,000") }}
+        </div>
+      </div>
+
+      <hr>
+
+      <h3>Additional details</h3>
+      <div class="form-grid">
+        <div class="field field--span-2">
+          {{ form.details.label }}
+          {{ form.details(placeholder="Purpose of visit, dates, accommodation, host info…") }}
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        {{ form.submit(class="btn--primary") }}
+        <a class="btn btn--secondary" href="{{ url_for('candidate_dashboard') }}">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

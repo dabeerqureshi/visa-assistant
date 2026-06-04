@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Start application &middot; NL Visit Visa{% endblock %}
+{% block content %}
+  <div class="card card--narrow">
+    <h2>Start a new application</h2>
+    <p class="subtitle">Give your application a short title — you can change details later.</p>
+    <form method="post" class="mt-2">
+      {{ form.hidden_tag() }}
+      <p>
+        {{ form.title.label }}
+        {{ form.title(autofocus=True, placeholder="e.g. Family visit, May 2026") }}
+      </p>
+      <div class="row mt-3">
+        {{ form.submit(class="btn--primary") }}
+        <a class="btn btn--secondary" href="{{ url_for('candidate_dashboard') }}">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

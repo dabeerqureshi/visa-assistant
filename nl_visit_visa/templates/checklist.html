@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import status_badge %}
+{% block title %}Document checklist &middot; NL Visit Visa{% endblock %}
+{% block content %}
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h2 class="mb-0">Document checklist</h2>
+        <p class="subtitle">{{ case.title }} &middot; #{{ case.id }}</p>
+      </div>
+      {{ status_badge(case.status) }}
+    </div>
+
+    {% set checked, total = case.checklist_progress() %}
+    <div class="progress">
+      <div class="progress-bar" style="width: {{ (checked / total * 100) if total else 0 }}%"></div>
+    </div>
+    <p class="muted mt-1">
+      <strong>{{ checked }} / {{ total }}</strong> documents confirmed
+    </p>
+
+    <form method="post" class="mt-2">
+      <ul class="checklist">
+        {% for item in case.checklist_items %}
+          <li class="checklist-item {% if item.has_document %}is-checked{% endif %}">
+            <label class="checklist-row">
+              <input type="checkbox"
+                     name="has_{{ item.id }}"
+                     {% if item.has_document %}checked{% endif %}>
+              <span class="checklist-name">{{ item.document_name }}</span>
+            </label>
+            <input type="text"
+                   name="notes_{{ item.id }}"
+                   value="{{ item.notes or '' }}"
+                   placeholder="Notes (e.g. provider, policy #, date issued)"
+                   class="checklist-notes">
+          </li>
+        {% endfor %}
+      </ul>
+
+      {% if not case.profile_complete() %}
+        <p class="muted mt-2">Complete your application details before submitting.</p>
+      {% endif %}
+      <div class="row mt-3">
+        <button type="submit" class="btn btn--primary">Save checklist</button>
+        <a class="btn btn--secondary" href="{{ url_for('application_details', case_id=case.id) }}">&larr; Back to details</a>
+        <button type="submit"
+                class="btn btn--primary"
+                formaction="{{ url_for('submit_case', case_id=case.id) }}">Submit application</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

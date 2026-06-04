@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import status_badge %}
+{% block title %}Your applications &middot; NL Visit Visa{% endblock %}
+{% block content %}
+  <div class="card-header">
+    <div>
+      <h2 class="mb-0">Your applications</h2>
+      <p class="subtitle">Track and continue your visa applications.</p>
+    </div>
+    <a class="btn btn--primary" href="{{ url_for('application_start') }}">+ New application</a>
+  </div>
+
+  <div class="card">
+    {% if cases and cases|length > 0 %}
+      <ul class="app-list">
+        {% for c in cases %}
+          {% set checked, total = c.checklist_progress() %}
+          <li>
+            <div>
+              <div class="app-title">{{ c.title }}</div>
+              <div class="app-meta">
+                Application #{{ c.id }}
+                &middot; Profile: {% if c.profile_complete() %}<span class="text-success">complete</span>{% else %}<span class="text-warning">incomplete</span>{% endif %}
+                &middot; Checklist: {{ checked }}/{{ total }}
+              </div>
+            </div>
+            <div>{{ status_badge(c.status) }}</div>
+            <div class="app-actions">
+              <a class="btn btn--secondary" href="{{ url_for('application_details', case_id=c.id) }}">Details</a>
+              <a class="btn btn--secondary" href="{{ url_for('checklist', case_id=c.id) }}">Checklist</a>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="empty-state">
+        <div class="icon">📝</div>
+        <p class="mb-1">You haven't started any applications yet.</p>
+        <a class="btn btn--primary" href="{{ url_for('application_start') }}">Start your first application</a>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

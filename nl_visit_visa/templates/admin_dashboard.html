@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import status_badge %}
+{% block title %}Admin &middot; NL Visit Visa{% endblock %}
+{% block content %}
+  <div class="card-header">
+    <div>
+      <h2 class="mb-0">Admin Dashboard</h2>
+      <p class="subtitle">All submitted and draft applications.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    {% if cases and cases|length > 0 %}
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr>
+              <th>Application</th>
+              <th>Applicant</th>
+              <th>Profile</th>
+              <th>Checklist</th>
+              <th>Status</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in cases %}
+              {% set checked, total = c.checklist_progress() %}
+              <tr>
+                <td>
+                  <a href="{{ url_for('admin_view_case', case_id=c.id) }}">{{ c.title }}</a>
+                  <div class="muted">#{{ c.id }}</div>
+                </td>
+                <td>{{ c.full_name or '—' }}<div class="muted">{{ c.nationality or '—' }}</div></td>
+                <td>{% if c.profile_complete() %}<span class="text-success">complete</span>{% else %}<span class="text-warning">incomplete</span>{% endif %}</td>
+                <td>{{ checked }} / {{ total }}</td>
+                <td>{{ status_badge(c.status) }}</td>
+                <td class="text-center">
+                  <a class="btn btn--secondary" href="{{ url_for('admin_view_case', case_id=c.id) }}">View</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="icon">📭</div>
+        <p class="mb-0">No applications yet.</p>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
